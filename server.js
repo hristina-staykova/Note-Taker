@@ -1,4 +1,4 @@
-const express = require("express");
+var express = require("express");
 var path = require("path");
 var app = express();
 var PORT = 4000;
@@ -14,15 +14,17 @@ app.listen(PORT, function() {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use(express.static(__dirname + "/public"));
+
 //Routing
 // get notes
 app.get("/notes", function(req, res) {
-  res.sendFile(path.join(__dirname, "public/notes.html"));
+  res.sendFile(path.join(__dirname, "/notes.html"));
 });
 
 // get homepage
 app.get("/", function(req, res) {
-  res.sendFile(path.join(__dirname, "public/index.html"));
+  res.sendFile(path.join(__dirname, "/index.html"));
 });
 
 // get notes api
@@ -30,8 +32,10 @@ app.get("/api/notes", function(req, res) {
   return res.json(notes);
 });
 
-// post new note and get notes api
+// post new note and get notes api - works, tested with Postman
 app.post("/api/notes", function(req, res) {
-  req.body = push(notes);
-  return res.json(notes);
+  var newNote = req.body;
+  notes.push(newNote);
+  console.log(notes);
+  return res.json(newNote);
 });
