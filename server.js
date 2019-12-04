@@ -32,10 +32,23 @@ app.get("/api/notes", function(req, res) {
   return res.json(notes);
 });
 
-// post new note and get notes api - works, tested with Postman
+// post new note and get notes api & add ID (a random number between 0 and 1000)
 app.post("/api/notes", function(req, res) {
   var newNote = req.body;
   notes.push(newNote);
-  console.log(notes);
+  newNote.id = Math.floor(Math.random() * 1000);
+  console.log(newNote.id + " from post note");
   return res.json(newNote);
+});
+
+//delete a note
+app.delete("/api/notes/:id", function(req, res) {
+  var noteID = req.params.id;
+  console.log(noteID + " getting id");
+  for (var i = 0; i < notes.length; i++) {
+    if (noteID == notes[i].id) {
+      notes.splice(i, 1);
+      return res.json(notes);
+    }
+  }
 });
