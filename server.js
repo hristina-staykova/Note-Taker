@@ -3,6 +3,7 @@ var path = require("path");
 var app = express();
 var PORT = 4000;
 
+//an array to store the notes
 let notes = [];
 
 // Listening the PORT
@@ -14,6 +15,7 @@ app.listen(PORT, function() {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+//to handle the loading of static files (incl. css file)
 app.use(express.static(__dirname + "/public"));
 
 //Routing
@@ -37,14 +39,12 @@ app.post("/api/notes", function(req, res) {
   var newNote = req.body;
   notes.push(newNote);
   newNote.id = Math.floor(Math.random() * 1000);
-  console.log(newNote.id + " from post note");
   return res.json(newNote);
 });
 
-//delete a note
+//delete a note - get the ID from req header, search for the note in the array and remove that note with .splice
 app.delete("/api/notes/:id", function(req, res) {
   var noteID = req.params.id;
-  console.log(noteID + " getting id");
   for (var i = 0; i < notes.length; i++) {
     if (noteID == notes[i].id) {
       notes.splice(i, 1);
