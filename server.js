@@ -1,10 +1,16 @@
 var express = require("express");
 var path = require("path");
+var fs = require("fs");
 var app = express();
 var PORT = 4000;
 
-//an array to store the notes
-let notes = [];
+//read the db.json file and store the content
+let notes = require("./db/db.json");
+
+//error/callback function
+var errorFn = function(err) {
+  if (err) throw err;
+};
 
 // Listening the PORT
 app.listen(PORT, function() {
@@ -34,11 +40,12 @@ app.get("/api/notes", function(req, res) {
   return res.json(notes);
 });
 
-// post new note and get notes api & add ID (a random number between 0 and 1000)
+// post new note, add ID (a random number between 0 and 1000), update the db.json
 app.post("/api/notes", function(req, res) {
   var newNote = req.body;
   notes.push(newNote);
   newNote.id = Math.floor(Math.random() * 1000);
+  fs.writeFile("./db/db.json", JSON.stringify(notes), errorFn);
   return res.json(newNote);
 });
 
@@ -48,6 +55,7 @@ app.delete("/api/notes/:id", function(req, res) {
   for (var i = 0; i < notes.length; i++) {
     if (noteID == notes[i].id) {
       notes.splice(i, 1);
+      fs.writeFile("./db/db.json", JSON.stringify(notes), errorFn);
       return res.json(notes);
     }
   }
